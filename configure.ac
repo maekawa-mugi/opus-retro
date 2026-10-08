@@ -128,6 +128,19 @@ AS_IF([test "$enable_fixed_point" = "yes"],[
 
 AM_CONDITIONAL([FIXED_POINT], [test "$enable_fixed_point" = "yes"])
 
+AC_ARG_ENABLE([ee-mmi],
+    [AS_HELP_STRING([--enable-ee-mmi],
+                    [enable R5900 Emotion Engine MMI fixed-point inner product (PS2 only)])],,
+    [enable_ee_mmi=no])
+AS_IF([test "x$enable_ee_mmi" = "xyes"], [
+  AS_IF([test "x$enable_fixed_point" != "xyes"],
+        [AC_MSG_ERROR([--enable-ee-mmi requires --enable-fixed-point])])
+  AS_CASE([$host_cpu], [mips*|ee*|r5900*], [],
+          [AC_MSG_ERROR([--enable-ee-mmi requires an EE/MIPS cross target])])
+  AC_DEFINE([OPUS_EE_MMI], [1], [Enable R5900 MMI fixed-point inner product])
+])
+AM_CONDITIONAL([EE_MMI], [test "x$enable_ee_mmi" = "xyes"])
+
 AC_ARG_ENABLE([fixed-point-debug],
     [AS_HELP_STRING([--enable-fixed-point-debug], [debug fixed-point implementation])],,
     [enable_fixed_point_debug=no])
