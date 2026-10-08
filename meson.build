@@ -175,6 +175,16 @@ foreach opt : feat
   set_variable('opt_' + opt[0].underscorify(), opt_foo)
 endforeach
 
+if get_option('ee-mmi')
+  if not get_option('fixed-point')
+    error('ee-mmi requires -Dfixed-point=true')
+  endif
+  if host_cpu_family not in ['mips', 'mips64']
+    error('ee-mmi requires an R5900/MIPS cross target')
+  endif
+  opus_conf.set('OPUS_EE_MMI', 1)
+endif
+
 opt_asm = get_option('asm')
 opt_rtcd = get_option('rtcd')
 opt_intrinsics = get_option('intrinsics')
