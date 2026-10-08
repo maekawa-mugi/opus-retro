@@ -19,6 +19,11 @@ jobs:
             -fno-sanitize-recover=all \
             tests/test_ee_mmi_inner_prod64_host.c -o test-ee64-model
           ./test-ee64-model
+          cc -O2 -std=c99 -Wall -Wextra -Werror \
+            -DOPUS_CHECK_ASM=1 -fsanitize=undefined \
+            -fno-sanitize-recover=all \
+            tests/test_ee_mmi_xcorr_host.c -o test-ee-xcorr
+          ./test-ee-xcorr
       - name: Clang model
         run: |
           clang -O3 -std=c99 -Wall -Wextra -Werror \
@@ -29,3 +34,8 @@ jobs:
             -DOPUS_CHECK_ASM=1 \
             tests/test_ee_mmi_inner_prod64_host.c -o test-ee64-model-clang
           ./test-ee64-model-clang
+          clang -O3 -std=c99 -Wall -Wextra -Werror \
+            -DOPUS_CHECK_ASM=1 -fsanitize=address,undefined \
+            -fno-sanitize-recover=all \
+            tests/test_ee_mmi_xcorr_host.c -o test-ee-xcorr-clang
+          ./test-ee-xcorr-clang

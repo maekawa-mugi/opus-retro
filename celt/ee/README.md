@@ -62,5 +62,27 @@ selection, aligned/misaligned fallbacks, extreme inputs and tails.
 toolchain or executed on PlayStation 2.** Treat it as an experimental
 candidate until native tests confirm behavior and speed.
 
-Future optimizations: pitch xcorr, FIR and longer vector batches, only
-after these primitives pass EE hardware tests.
+## Four-lag CELT correlation
+
+`xcorr_mmi.S` evaluates four adjacent pitch-correlation lags in parallel.
+Each iteration uses PHMADH/PADDW to accumulate four 32-bit partial sums per
+lag, and MTSAH/QFSRV to shift the aligned input stream by 1, 2, and 3
+halfwords. The final horizontal additions use modular 32-bit arithmetic.
+
+`xcorr_kernel_ee_mmi()` is wired into CELT through `OVERRIDE_XCORR_KERNEL`.
+It preserves pre-existing `sum[4]` values, processes a scalar prefix to
+align both inputs together, and always leaves a scalar tail of at least
+eight samples because the second aligned LQ reads eight extra y elements.
+If x and y have different offsets modulo 16, the entire correlation uses
+the reference C path. This is deliberately conservative: it never reads
+before a buffer or beyond the documented y[N+3] window.
+
+A host-only model test covers random/extreme inputs, 16-byte alignment
+offsets, lengths, nonzero incoming sums, and bounds of the MMI loads.
+Build and run with the standalone test in
+`tests/test_ee_mmi_xcorr_host.c`. No physical R5900 MMI instructions
+have been executed; native correctness and performance remain unverified.
+
+Future optimizations: support mismatched stream alignment without unsafe
+LQ access, reduce QFSRV scheduling overhead, and benchmark FIR/FFT kernels
+on real EE hardware.
