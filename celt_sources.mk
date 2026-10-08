@@ -21,7 +21,8 @@ celt/vq.c \
 celt/celt_tx_tables.c
 
 CELT_SOURCES_EE_MMI = \
-celt/ee/inner_prod_mmi.S
+celt/ee/inner_prod_mmi.S \
+celt/ee/inner_prod64_mmi.S
 
 CELT_SOURCES_X86_RTCD = \
 celt/x86/x86cpu.c \
