@@ -60,6 +60,18 @@ set(OPUS_FIXED_POINT_HELP_STR "compile as fixed-point (for machines without a fa
 option(OPUS_FIXED_POINT ${OPUS_FIXED_POINT_HELP_STR} OFF)
 add_feature_info(OPUS_FIXED_POINT OPUS_FIXED_POINT ${OPUS_FIXED_POINT_HELP_STR})
 
+option(OPUS_EE_MMI "enable PS2 R5900 MMI fixed-point inner product" OFF)
+if(OPUS_EE_MMI)
+  if(NOT OPUS_FIXED_POINT)
+    message(FATAL_ERROR "OPUS_EE_MMI requires OPUS_FIXED_POINT=ON")
+  endif()
+  if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "([Mm][Ii][Pp][Ss]|[Rr]5900|^[Ee][Ee]$)")
+    message(FATAL_ERROR "OPUS_EE_MMI requires an R5900/MIPS target")
+  endif()
+  enable_language(ASM)
+endif()
+add_feature_info(OPUS_EE_MMI OPUS_EE_MMI "experimental R5900 MMI optimization")
+
 set(OPUS_ENABLE_FLOAT_API_HELP_STR "compile with the floating point API (for machines with float library).")
 option(OPUS_ENABLE_FLOAT_API ${OPUS_ENABLE_FLOAT_API_HELP_STR} ON)
 add_feature_info(OPUS_ENABLE_FLOAT_API OPUS_ENABLE_FLOAT_API ${OPUS_ENABLE_FLOAT_API_HELP_STR})
@@ -399,6 +411,11 @@ endif()
 
 add_sources_group(opus silk ${silk_headers} ${silk_sources})
 add_sources_group(opus celt ${celt_headers} ${celt_sources})
+
+if(OPUS_EE_MMI)
+  target_sources(opus PRIVATE celt/ee/inner_prod_mmi.S)
+  target_compile_definitions(opus PRIVATE OPUS_EE_MMI=1)
+endif()
 
 if(OPUS_FIXED_POINT)
   add_sources_group(opus silk ${silk_sources_fixed})
