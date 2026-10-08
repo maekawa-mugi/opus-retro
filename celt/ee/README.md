@@ -3,7 +3,10 @@
 This directory holds an opt-in, fixed-point-only R5900 Emotion Engine MMI
 implementation of the CELT 16-bit inner product. The internal SILK
 `silk_inner_prod_aligned()` path already calls `celt_inner_prod()` in
-fixed-point builds, so it can also benefit.
+fixed-point builds, so it can also benefit. A second MMI kernel implements
+SILK's exact 64-bit `silk_inner_prod16_c()` accumulation using `PMULTH`
+and `PMFHL.UW`. Unlike the CELT kernel, it never drops carries between
+32-bit pair products.
 
 ## Requirements and scope
 
@@ -16,6 +19,7 @@ fixed-point builds, so it can also benefit.
   alignment and short vectors always use the original C arithmetic.
 - **Numeric contract:** wrap to the low 32 bits of the signed 16x16 sum,
   matching the Opus fixed-point path. This is NOT a 64-bit Silk inner product.
+  The separate SILK MMI kernel returns the *full* signed 64-bit sum.
 - **ABI:** the handwritten assembly uses o32-style a0/a1/a2/v0 calling
   convention and caller-saved temporary registers. Test on the actual PS2
   toolchain, as it is not part of the generic upstream MIPS ISA.
@@ -59,4 +63,4 @@ toolchain or executed on PlayStation 2.** Treat it as an experimental
 candidate until native tests confirm behavior and speed.
 
 Future optimizations: pitch xcorr, FIR and longer vector batches, only
-after this first primitive passes EE hardware tests.
+after these primitives pass EE hardware tests.
