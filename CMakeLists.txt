@@ -413,7 +413,8 @@ add_sources_group(opus silk ${silk_headers} ${silk_sources})
 add_sources_group(opus celt ${celt_headers} ${celt_sources})
 
 if(OPUS_EE_MMI)
-  target_sources(opus PRIVATE celt/ee/inner_prod_mmi.S)
+  target_sources(opus PRIVATE celt/ee/inner_prod_mmi.S
+                             celt/ee/inner_prod64_mmi.S)
   target_compile_definitions(opus PRIVATE OPUS_EE_MMI=1)
 endif()
 
