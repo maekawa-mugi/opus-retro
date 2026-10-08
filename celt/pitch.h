@@ -42,7 +42,7 @@
 #include "x86/pitch_sse.h"
 #endif
 
-#if defined(FIXED_POINT) && defined(__mips)
+#if defined(FIXED_POINT) && defined(__mips) && !defined(OPUS_EE_MMI)
 #include "mips/pitch_mipsr1.h"
 #endif
 
@@ -165,6 +165,10 @@ static OPUS_INLINE opus_val32 celt_inner_prod_c(const opus_val16 *x,
       xy = MAC16_16(xy, x[i], y[i]);
    return xy;
 }
+
+#if defined(FIXED_POINT) && defined(OPUS_EE_MMI)
+#include "ee/pitch_mmi.h"
+#endif
 
 #if !defined(OVERRIDE_CELT_INNER_PROD)
 # define celt_inner_prod(x, y, N, arch) \
