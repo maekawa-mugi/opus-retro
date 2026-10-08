@@ -20,6 +20,9 @@ celt/rate.c \
 celt/vq.c \
 celt/celt_tx_tables.c
 
+CELT_SOURCES_EE_MMI = \
+celt/ee/inner_prod_mmi.S
+
 CELT_SOURCES_X86_RTCD = \
 celt/x86/x86cpu.c \
 celt/x86/x86_celt_map.c
