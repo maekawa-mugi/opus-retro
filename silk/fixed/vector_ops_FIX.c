@@ -32,6 +32,10 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "SigProc_FIX.h"
 #include "pitch.h"
 
+#if defined(OPUS_EE_MMI) && defined(FIXED_POINT)
+#include "ee/vector_ops_mmi.h"
+#endif
+
 /* Copy and multiply a vector by a constant */
 void silk_scale_copy_vector16(
     opus_int16                  *data_out,
@@ -93,10 +97,14 @@ opus_int64 silk_inner_prod16_c(
     const opus_int              len                 /*    I vector lengths                                              */
 )
 {
+#if defined(OPUS_EE_MMI) && defined(FIXED_POINT)
+    return silk_inner_prod16_ee_mmi(inVec1, inVec2, len);
+#else
     opus_int   i;
     opus_int64 sum = 0;
     for( i = 0; i < len; i++ ) {
         sum = silk_SMLALBB( sum, inVec1[ i ], inVec2[ i ] );
     }
     return sum;
+#endif
 }
