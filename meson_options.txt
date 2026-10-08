@@ -1,5 +1,6 @@
 # Optimizations
 option('fixed-point', type : 'boolean', value : false, description : 'Compile without floating point (for machines without a fast enough FPU')
+option('ee-mmi', type : 'boolean', value : false, description : 'Use R5900 Emotion Engine MMI fixed-point inner product (PS2 only)')
 option('fixed-point-debug', type : 'boolean', value : false, description : 'Debug fixed-point implementation')
 option('float-api', type : 'boolean', value : true, description : 'Compile with or without the floating point API (for machines with no float library')
 option('float-approx', type : 'boolean', value : false, description : 'Enable fast approximations for floating point (not supported on all platforms)')
