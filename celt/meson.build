@@ -1,4 +1,7 @@
 celt_sources = sources['CELT_SOURCES']
+if get_option('ee-mmi')
+  celt_sources += sources['CELT_SOURCES_EE_MMI']
+endif
 
 celt_sse_sources = sources['CELT_SOURCES_SSE']
 
